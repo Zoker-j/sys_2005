@@ -6,15 +6,28 @@ import "@/assets/styles/base.css";
 import "@/assets/styles/el-reset.css";
 
 import ElementUI from 'element-ui';
-import 'element-ui/lib/theme-chalk/index.css';
-Vue.config.productionTip = false;
-Vue.use(ElementUI);
-//按需引入
-// import { Carousel,CarouselItem} from 'element-ui';
 
-//注册组件
-// Vue.component("el-carousel",Carousel)
-// Vue.component("el-carousel-item",CarouselItem)
+import 'element-ui/lib/theme-chalk/index.css';
+
+Vue.config.productionTip = false;
+
+Vue.use(ElementUI);
+
+//路由前置钩子(导航守卫)
+router.beforeEach((to,from,next)=>{
+  //判断localstorage中是否有token
+  let token=localStorage.getItem("qf-token")
+  if(token){
+    //有token放行
+    next()
+  }else{//token
+    if(to.path==="/login"){
+      next()
+    }else{//访问的不是登录页
+      next({path:"/login"})
+    }
+  }
+})
 
 new Vue({
   router,

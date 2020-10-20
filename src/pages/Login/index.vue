@@ -25,14 +25,14 @@
           ></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="success" ref="btn" @click="submitForm('loginForm')"
+          <el-button type="success"  @click="submitForm('loginForm')"
             >提交</el-button
           >
         </el-form-item>
       </el-form>
     </div>
     <video
-      src="../../assets/video/bg_video1.mp4"
+      src="../../assets/video/bg_video3.mp4"
       autoplay="autoplay"
       preload="auto"
       loop="loop"
@@ -41,6 +41,8 @@
   </div>
 </template>
 <script>
+import { login,reg } from "@/api"
+import {mapMutations} from "vuex"
 export default {
   data() {
     // jsDoc
@@ -80,15 +82,38 @@ export default {
       }
     };
   },
-  mounted() {
-  },
   methods: {
+    ...mapMutations(['SET_USERINFO']),
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
           //本地校验通过
-          alert("submit!");
-        } else {
+          const loading = this.$loading({
+          lock: true,
+          text: '正在登入',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+          });
+          let {username,password}=this.loginForm
+          login(username,password)
+          .then(res=>{
+            // console.log(res);
+            loading.close()
+            if(res.data.state){
+              this.$message.success("登入成功")
+              localStorage.setItem("qf-token",res.data.token)
+              localStorage.setItem("qf-userInfo",JSON.stringify(res.data.userInfo))
+              //设置vuex中state['userInfo]的值
+              this.SET_USERINFO(res.data.userInfo)
+              this.$router.push("/")
+            }else{
+              this.$message.error('用户名或密码错误')
+            }
+          })
+          .catch(err=>{
+            console.log(err);
+          })
+        }else{
           console.log("error submit!!");
           return false;
         }
@@ -124,14 +149,12 @@ export default {
   font-size: 50px;
   color: gold;
 }
-
 /* 表单 */
 .el-form {
   width: 400px;
   margin-top: 50px;
   text-align: center;
 }
-
 /* 提交按钮 */
 .el-button {
   color: aliceblue;
