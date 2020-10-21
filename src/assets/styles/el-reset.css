@@ -3,6 +3,7 @@
     width: 83% !important;
     background-color:transparent!important;
     border: 1px solid aliceblue;
+    color:gold
 }
 .login-page .el-form-item__label{
     color:#fff!important;
@@ -28,3 +29,7 @@
 video{
     object-fit: contain;
 }
+.home-page .el-submenu__title:hover,.el-submenu__title:focus{
+    background-image: linear-gradient(90deg,red,blue);
+  
+  }
